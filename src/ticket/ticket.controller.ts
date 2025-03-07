@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, Query } from '@nestjs/common';
 import { TicketService } from './ticket.service';
-import { CreateTicketDto, UpdateTicketDto } from './dto/ticket.dto';
+import { CreateTicketDto, TicketFilterDto, UpdateTicketDto } from './dto/ticket.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 @ApiTags('Tickets')
 @Controller('api/tickets')
@@ -17,14 +17,9 @@ export class TicketController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tickets' })
-  @ApiQuery({ name: 'status', required: false, example: 'open', description: 'Filter by ticket status' })
-  @ApiQuery({ name: 'priority', required: false, example: 'high', description: 'Filter by ticket priority' })
   @ApiResponse({ status: 200, description: 'Tickets fetched successfully' })
-  findAll(
-    @Query('status') status?: string,
-    @Query('priority') priority?: string,
-  ) {
-    return this.service.findAll(status, priority);
+  findAll(@Query() filters: TicketFilterDto) {
+    return this.service.findAll(filters);
   }
 
   @Get(':id')

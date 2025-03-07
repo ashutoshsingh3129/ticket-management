@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, InternalServerErrorException } from '@ne
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
-import { CreateTicketDto, UpdateTicketDto } from './dto/ticket.dto';
+import { CreateTicketDto, TicketFilterDto, UpdateTicketDto } from './dto/ticket.dto';
 import { AblyService } from '../services/ably.service';
 
 @Injectable()
@@ -30,18 +30,18 @@ export class TicketService {
   }
 
 
-  async findAll(status?: string, priority?: string) {
-    const filters: any = {};
+  async findAll(filters: TicketFilterDto) {
+    const where: any = {};
   
-    if (status) {
-      filters.status = status;
+    if (filters.status) {
+      where.status = filters.status;
     }
   
-    if (priority) {
-      filters.priority = priority;
+    if (filters.priority) {
+      where.priority = filters.priority;
     }
   
-    const tickets = await this.repo.find({ where: filters });
+    const tickets = await this.repo.find({ where });
   
     return {
       data: tickets,
@@ -49,6 +49,7 @@ export class TicketService {
       statusCode: 200,
     };
   }
+  
   
 
 
